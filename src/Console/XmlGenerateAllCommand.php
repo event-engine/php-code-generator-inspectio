@@ -25,14 +25,14 @@ final class XmlGenerateAllCommand extends Command
         $this
             ->setName('inspectio:xml:generate-all')
             ->setDescription('Converts InspectIO mxGraph XML to GraphML XML and generates Event Engine code')
-            ->addArgument('file_xml', InputArgument::REQUIRED, 'Source xml file')
-            ->addArgument('file_xsl', InputArgument::OPTIONAL, 'Source xsl file');
+            ->addArgument(WorkflowConfigFactory::SLOT_XML_FILE, InputArgument::REQUIRED, 'Source xml file')
+            ->addArgument(WorkflowConfigFactory::SLOT_XSL_FILE, InputArgument::OPTIONAL, 'Source xsl file');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fileXml = $input->getArgument(WorkflowConfigFactory::SLOT_XML_FILE);
-        $fileXsl = $input->getArgument(WorkflowConfigFactory::SLOT_XSL_FILE) ?: \dirname(__DIR__) . '/xsl/graphmx.xsl';
+        $fileXsl = $input->getArgument(WorkflowConfigFactory::SLOT_XSL_FILE) ?: \dirname(__DIR__, 2) . '/xsl/graphmx.xsl';
 
         /** @var \OpenCodeModeling\CodeGenerator\Workflow\WorkflowContext $workflowContext */
         $workflowContext = $this->getHelper(WorkflowContext::class)->context();
