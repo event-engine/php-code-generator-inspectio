@@ -49,12 +49,12 @@
                 <xsl:attribute name="attr.name">label</xsl:attribute>
                 <xsl:attribute name="attr.type">string</xsl:attribute>
             </xsl:element>
+
             <xsl:element name="key">
-                <xsl:attribute name="id">initial</xsl:attribute>
+                <xsl:attribute name="id">metadata</xsl:attribute>
                 <xsl:attribute name="for">node</xsl:attribute>
-                <xsl:attribute name="attr.name">initial</xsl:attribute>
-                <xsl:attribute name="attr.type">boolean</xsl:attribute>
-                <xsl:element name="default">false</xsl:element>
+                <xsl:attribute name="attr.name">metadata</xsl:attribute>
+                <xsl:attribute name="attr.type">string</xsl:attribute>
             </xsl:element>
 
             <xsl:call-template name="tplGraph">
@@ -70,14 +70,9 @@
         <graph id="iio" edgedefault="directed">
             <!-- select stickies and render node XML elements -->
             <xsl:for-each select="$stickies">
-                <xsl:sort select="./@type" order="ascending"/>
-                <!-- TODO use initial value from graphMX XML -->
-                <xsl:call-template name="tplNode">
-                    <xsl:with-param
-                            name="initial"
-                            select="./@type = 'command' and not(preceding-sibling::node()/@type = 'command')"/>
-                </xsl:call-template>
+                <xsl:call-template name="tplNode"/>
             </xsl:for-each>
+
             <xsl:for-each select="/mxGraphModel/root/*[@edge=1 and @source and @target]">
                 <!-- check if edge is between selected stickies and render edge XML elements -->
                 <xsl:if test="$xpathStickies/@id = ./@source and $xpathStickies/@id = ./@target">
@@ -90,7 +85,6 @@
     <!-- template tplNode -->
 
     <xsl:template name="tplNode">
-        <xsl:param name="initial"/>
         <xsl:element name="node" use-attribute-sets="nodeAttr">
             <xsl:element name="data">
                 <xsl:attribute name="key">type</xsl:attribute>
@@ -103,12 +97,13 @@
                 <xsl:value-of select="./@label" disable-output-escaping="yes"/>
                 <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
             </xsl:element>
-            <xsl:if test="./@type = 'command' and $initial">
-                <xsl:element name="data">
-                    <xsl:attribute name="key">initial</xsl:attribute>
-                    <xsl:value-of select="$initial"/>
-                </xsl:element>
-            </xsl:if>
+
+            <xsl:element name="data">
+                <xsl:attribute name="key">metadata</xsl:attribute>
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                <xsl:value-of select="./@metadata" disable-output-escaping="yes"/>
+                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </xsl:element>
         </xsl:element>
     </xsl:template>
 
