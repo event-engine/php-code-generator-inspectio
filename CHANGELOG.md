@@ -21,6 +21,24 @@ All notable changes to this project will be documented in this file, in reverse 
 
 * Nothing
 
+## 0.1.1 (2020-09-04)
+
+### Added
+
+* Update `open-code-modeling/php-code-generator` and `open-code-modeling/php-code-generator-transformator` to 0.1.0
+
+### Deprecated
+
+* Nothing
+
+### Removed
+
+* Nothing
+
+### Fixed
+
+* Nothing
+
 ## 0.1.0 (2020-09-04)
 
 ### Added
