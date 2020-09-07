@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace EventEngine\CodeGenerator\Inspectio;
 
+use EventEngine\CodeGenerator\Inspectio\Console\XmlGenerateAllCommand;
 use EventEngine\CodeGenerator\Inspectio\Transformator\MxGraphToGraphMl;
 use OpenCodeModeling\CodeGenerator;
 
@@ -31,22 +32,26 @@ final class WorkflowConfigFactory
      * @param string $inputSlotXmlFilename XML file to load
      * @param string $inputSlotXslFilename XSL file to load
      * @param string $outputSlotGraphMlXml Transformed GraphML XML
-     * @return CodeGenerator\Config\Component
+     * @return CodeGenerator\Config\WorkflowConfig
      */
     public static function mxGraphToGraphMlConfig(
         CodeGenerator\Workflow\WorkflowContext $workflowContext,
         string $inputSlotXmlFilename,
         string $inputSlotXslFilename,
         string $outputSlotGraphMlXml
-    ): CodeGenerator\Config\Component {
+    ): CodeGenerator\Config\WorkflowConfig {
         if (! $workflowContext->has(self::SLOT_GRAPHML_SCHEMA_FILE)) {
             $workflowContext->put(self::SLOT_GRAPHML_SCHEMA_FILE, 'http://graphml.graphdrawing.org/xmlns/1.1/graphml.xsd');
         }
 
-        return new CodeGenerator\Config\ArrayConfig(
+        $workflow = new CodeGenerator\Config\Workflow(
             CodeGenerator\Transformator\FileToDomDocument::workflowComponentDescription($inputSlotXmlFilename, self::SLOT_DOM_XML),
             CodeGenerator\Transformator\FileToDomDocument::workflowComponentDescription($inputSlotXslFilename, self::SLOT_DOM_XSL),
             MxGraphToGraphMl::workflowComponentDescription(self::SLOT_DOM_XSL, self::SLOT_DOM_XML, self::SLOT_GRAPHML_SCHEMA_FILE, $outputSlotGraphMlXml),
         );
+
+        $workflow->addConsoleCommands(new XmlGenerateAllCommand());
+
+        return $workflow;
     }
 }
